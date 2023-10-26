@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_PEOPLE 10
+#define MAX_DATA 100
+ 
+int main(int argc, char *argv[]) {
+    
+    char str_tmp[MAX_DATA],name[MAX_PEOPLE+1][20],num[MAX_PEOPLE+1],*p;
+    int kor[MAX_PEOPLE+1] ,eng[MAX_PEOPLE+1], math[MAX_PEOPLE+1], sci[MAX_PEOPLE+1], role[MAX_PEOPLE+1];
+    int i=0,sum[MAX_PEOPLE+1],avg[MAX_PEOPLE+1],rank[MAX_PEOPLE+1],s,j=0,k=0;
+    FILE *pFile, *outFile;
+    char *temp;
+    char t1[10], t2[10], t3[10], t4[10], t5[10], t6[10], t7[10], t8[10], t9[10];
+ 
+    pFile = fopen("sungjuk.csv", "r" );
+    outFile = fopen("out.csv","w");
+    if( pFile != NULL )
+    {   i=0, sum[0]=sum[1]=0;
+        while( !feof( pFile ) )
+{              
+            fgets( str_tmp, MAX_DATA, pFile );          
+            printf( "%d data : %s ",i, str_tmp );            
+         //   printf("=============================\n");
+    if(i>=1)
+{
+    s=0;j=0;sum[i]=0;
+             p = strtok(str_tmp,",");
+            
+printf("%s, ",p);  // number
+num[i]=atoi(p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // name
+sprintf(name[i],"%s",p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // kor
+sum[i] += atoi(p);
+kor[i]= atoi(p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // ENG
+sum[i] += atoi(p);
+eng[i]= atoi(p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // MATH
+sum[i] += atoi(p);
+math[i]= atoi(p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // scienc
+sum[i] += atoi(p);
+sci[i]= atoi(p);
+
+p = strtok(NULL,",");
+printf("%s, ",p); // role
+role[i]= atoi(p);
+sum[i] += atoi(p); k=sum[1];     
+// 표준편차, 분산 알고리즘 추가 
+p = strtok(NULL,",");
+printf("sum= %d ave=%4d",sum[i],sum[i]/5);
+printf("\n===========================================\n");
+
+}
+// printf("sum[%d] =%d \n", i, sum[i]);
+i++;
+
+if(i>MAX_PEOPLE) break;
+        }
+ /*       
+       for(i=1;i<=MAX_PEOPLE;i++)
+{
+if(i==1) sum[1]=k;
+printf("sum[%d] =%d \n", i, sum[i]);
+}
+*/        // 석차메기기 개선  (오류있음) 
+for(i=1;i<=MAX_PEOPLE;i++)
+{ 
+s=1;
+for(int j=1;j<=10;j++)
+{
+if(sum[i]<sum[j]) s++;
+}
+rank[i] = s;
+printf("%d %s = rank %d\n",i,name[i],rank[i]);
+}
+////////////////////////
+/*   for(i=1;i<=MAX_PEOPLE;i++)
+{
+printf("%d =%d \n", i, sum[i]);
+}
+*/ ////////////////////////////////
+//csv 저장용 파일생성   
+printf("\n===========================================\n");
+printf(" Num name kor eng math sci role sum rank\n");
+
+sprintf(str_tmp, "학번,성명,국어,영어,수학,과학,윤리,총점,평균,석차\n");
+fputs( str_tmp, outFile ); 
+
+for(i=1;i<=MAX_PEOPLE;i++)
+{
+printf("%d | %s | %d| %d| %d| %d| %d| %d| %d| %d|\n",
+i, name[i], kor[i], eng[i], math[i], sci[i], role[i], sum[i], sum[i]/5, rank[i]);
+ // to csv format
+   itoa(i, t1, 10);
+//    printf("%s", &t1);
+   itoa(kor[i],t2,10);
+   itoa(eng[i],t3,10);
+   itoa(math[i],t4,10);
+   itoa(sci[i],t5,10);
+   itoa(role[i],t6,10);
+   itoa(sum[i],t7,10);
+   itoa(sum[i]/5,t8,10);
+   itoa(rank[i],t9,10);
+  sprintf(str_tmp,"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,\n",
+  t1, name[i],t2, t3, t4, t5, t6, t7, t8, t9);
+  fputs( str_tmp, outFile );    
+
+}
+    }
+    fclose( pFile );
+    fclose(outFile);
+    return 0;
+}

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parking", "parking.vcxproj", "{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Debug|x64.ActiveCfg = Debug|x64
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Debug|x64.Build.0 = Debug|x64
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Debug|x86.ActiveCfg = Debug|Win32
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Debug|x86.Build.0 = Debug|Win32
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Release|x64.ActiveCfg = Release|x64
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Release|x64.Build.0 = Release|x64
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Release|x86.ActiveCfg = Release|Win32
+		{FFC15705-8DF9-4207-B14C-7FCD56F93A4F}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56D73AFF-12BC-4003-8091-EC57F8E84673}
+	EndGlobalSection
+EndGlobal
