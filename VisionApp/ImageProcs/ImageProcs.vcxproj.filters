@@ -18,5 +18,16 @@
     <ClCompile Include="ImageProcs.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="01.C++Basic.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GuGuDan.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GuGuDan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
