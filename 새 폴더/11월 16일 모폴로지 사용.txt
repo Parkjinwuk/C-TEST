@@ -1,0 +1,122 @@
+#pragma once
+
+#include "ISP.h"
+
+int main() 
+{
+   std::string fileName = "../KCCImageNet/brake_disk/brake_disk_part_01.png"; //이미지 불러오는 코드
+   cv::Mat src_gray = cv::imread(fileName, cv::ImreadModes::IMREAD_ANYCOLOR); //Mat으로 src_gray
+
+    Mat drawing;// = Mat::zeros(src_color_HSV.size(), CV_8UC3);
+    
+
+
+
+   uchar* pData = src_gray.data;
+   int widht = src_gray.cols;
+   int height = src_gray.rows;
+   int channels = src_gray.channels();
+
+    if (channels == 3)//color
+        drawing = src_gray.clone(); 
+    else//gray
+        cvtColor(src_gray, drawing, COLOR_GRAY2BGR);
+
+   //분리..segmentation
+   Mat src_bin;
+   double thres = 240;
+   cv::threshold(src_gray, src_bin, thres, 255, ThresholdTypes::THRESH_BINARY);
+
+
+
+    //morpology
+
+    int kernelSz = 2;
+    int shape = MorphShapes::MORPH_CROSS;
+    cv::Size sz = Size(2 * kernelSz + 1, 2 * kernelSz + 1);
+    Mat SE = cv::getStructuringElement(shape, sz);
+    Mat src_open;
+    int type = MorphTypes::MORPH_OPEN;
+    cv::morphologyEx(src_bin, src_open, type, SE);
+
+
+
+
+
+
+    RNG rng(12345);
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    findContours(src_open, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
+
+
+
+
+
+
+
+
+
+
+
+    int max_area_index = -1;
+    double max_area = 0;
+    for (size_t i = 0; i < contours.size(); i++)
+    {
+        double area = contourArea(contours[i]);
+        if (max_area < area)
+        {
+            max_area = area;
+            max_area_index = i;
+        }
+    }
+    if (max_area_index >= 0)
+    {
+        size_t i = max_area_index;
+        Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
+        //drawContours(drawing, contours, (int)i, color, 1, LINE_8, hierarchy, 0);
+        drawContours(drawing, contours, (int)i, color, CV_FILLED);
+
+        double area = contourArea(contours[i]);
+        RotatedRect rrt = minAreaRect(contours[i]);
+        //rrt.center.x
+        drawMarker(drawing, rrt.center, CV_RGB(255, 255, 255), MarkerTypes::MARKER_CROSS);
+
+        string msg;
+        msg = std::format("area = {:.1f}", area);
+        putText(drawing, msg, rrt.center, FONT_HERSHEY_SIMPLEX, 0.8, CV_RGB(10, 0, 10), 1, 8);
+    }
+    return 0;
+
+
+    int object_contour_num = 0;
+    for (size_t i = 0; i < contours.size(); i++)
+    {
+        int sz = contours[i].size();
+        if (sz < 10)
+            continue;
+        object_contour_num++;
+        Scalar color = Scalar(rng.uniform(0, 256), rng.uniform(0, 256), rng.uniform(0, 256));
+        //drawContours(drawing, contours, (int)i, color, 1, LINE_8, hierarchy, 0);
+        drawContours(drawing, contours, (int)i, color, CV_FILLED);
+
+        double area = contourArea(contours[i]);
+        RotatedRect rrt = minAreaRect(contours[i]);
+        //rrt.center.x
+        drawMarker(drawing, rrt.center, CV_RGB(255,255,255), MarkerTypes::MARKER_CROSS);
+
+        string msg;
+        msg = std::format("area = {:.1f}", area);
+        putText(drawing, msg, rrt.center, FONT_HERSHEY_SIMPLEX, 0.8, CV_RGB(10, 0, 10), 1, 8);
+
+        //if (carea < cv::contourArea(contours[i])) { carea = cv::contourArea(contours[i]); object_contour_num = i; }//가장 넓은 면적을 가진 contours 요소를 찾아내는 함수 object_contour_num에 해당 인덱스가 저장됨
+    }
+
+
+
+
+
+   return 0;
+
+}
