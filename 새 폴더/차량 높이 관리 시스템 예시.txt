@@ -1,0 +1,132 @@
+#pragma once
+
+#include "Common.h"
+
+int main() {
+    // 비디오 캡처 객체 생성
+    VideoCapture cap(0);  // 0은 기본 카메라를 의미합니다. 다른 카메라를 사용하려면 해당 번호로 변경하세요.
+
+    if (!cap.isOpened()) {
+        cerr << "카메라를 열 수 없습니다." << endl;
+        return -1;
+    }
+
+    // 차량의 실제 높이 (미터 단위)
+    float real_car_height = 2.0;
+
+    while (true) {
+        Mat frame;
+        cap >> frame;  // 비디오 프레임 읽기
+
+        if (frame.empty()) {
+            cerr << "프레임을 읽을 수 없습니다." << endl;
+            break;
+        }
+
+        // 이미지 처리를 통해 차량 높이 측정 수행
+
+        // 예제에서는 빨간색으로 차량의 경계를 표시합니다.
+        Scalar lower_red(0, 0, 100);
+        Scalar upper_red(100, 100, 255);
+        Mat red_mask;
+        inRange(frame, lower_red, upper_red, red_mask);
+
+        vector<vector<Point>> contours;
+        findContours(red_mask, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+
+        for (const auto& contour : contours) {
+            Rect bounding_box = boundingRect(contour);
+            rectangle(frame, bounding_box, Scalar(0, 255, 0), 2);
+
+            // 차량 높이 측정
+            float pixel_car_height = bounding_box.height;
+            float pixel_to_meter_ratio = real_car_height / pixel_car_height;
+
+            // 출력
+            cout << "차량의 픽셀 높이: " << pixel_car_height << endl;
+            cout << "1 픽셀당 미터 비율: " << pixel_to_meter_ratio << endl;
+            cout << "차량의 실제 높이: " << pixel_car_height * pixel_to_meter_ratio << " 미터" << endl;
+        }
+
+        // 창에 프레임 표시
+        imshow("차량 높이 측정", frame);
+
+        // 'q' 키를 누르면 종료
+        if (waitKey(30) == 'q') {
+            break;
+        }
+    }
+
+    // 프로그램 종료 전에 비디오 캡처 객체 해제
+    cap.release();
+
+    return 0;
+}
+
+=============================================================================
+
+#pragma once
+
+#include "Common.h"
+
+int main() {
+    // 카메라 내부 매개 변수
+    double fx = 1000.0; // x 방향 초점 거리
+    double fy = 1000.0; // y 방향 초점 거리
+    double cx = 320.0;  // x 방향 중점 좌표
+    double cy = 240.0;  // y 방향 중점 좌표
+
+    // 실제 사물 높이 (미터 단위)
+    double real_object_height = 1.0;
+
+    // 거리 (미터 단위)
+    double distance = 1.0;
+
+    // 비디오 캡처 객체 생성
+    VideoCapture cap(0);  // 0은 기본 카메라를 의미합니다. 다른 카메라를 사용하려면 해당 번호로 변경하세요.
+
+    if (!cap.isOpened()) {
+        cerr << "카메라를 열 수 없습니다." << endl;
+        return -1;
+    }
+
+    while (true) {
+        Mat frame;
+        cap >> frame;  // 비디오 프레임 읽기
+
+        if (frame.empty()) {
+            cerr << "프레임을 읽을 수 없습니다." << endl;
+            break;
+        }
+
+        // 이미지 처리를 통해 객체 높이 측정 수행
+
+        // 예제에서는 키보드 입력으로 객체의 윗부분과 아랫부분을 지정합니다.
+        Rect object_roi(100, 100, 200, 400);
+        rectangle(frame, object_roi, Scalar(0, 255, 0), 2);
+
+        // 객체 높이 측정
+        double pixel_object_height = object_roi.height;
+        double object_height_in_image = pixel_object_height / 2.0;  // 객체 중심에서 윗부분까지의 거리
+
+        // 객체의 세계 좌표에서의 높이 계산
+        double object_height_in_world = (fy * real_object_height * distance) / object_height_in_image;
+
+        // 출력
+        cout << "객체의 픽셀 높이: " << pixel_object_height << endl;
+        cout << "객체의 세계 좌표에서의 높이: " << object_height_in_world << " 미터" << endl;
+
+        // 창에 프레임 표시
+        imshow("객체 높이 측정", frame);
+
+        // 'q' 키를 누르면 종료
+        if (waitKey(500) == 'q') {
+            break;
+        }
+    }
+
+    // 프로그램 종료 전에 비디오 캡처 객체 해제
+    cap.release();
+
+    return 0;
+}
